@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MANDO | Men's Fashion</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #101010;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+header {
+  background: #080808;
+  padding: 22px 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #b99a55;
+}
+.logo {
+  font-size: 30px;
+  letter-spacing: 5px;
+  color: #d6b66c;
+  font-weight: bold;
+}
+header a {
+  color: white;
+  text-decoration: none;
+  margin-right: 18px;
+}
+.hero {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 50px 15px;
+  background: linear-gradient(120deg,#171717,#29251d,#080808);
+}
+.hero h1 {
+  font-size: 55px;
+  letter-spacing: 8px;
+  color: #d6b66c;
+}
+.hero p {
+  margin: 20px;
+  color: #ddd;
+  font-size: 18px;
+}
+.btn {
+  background: #c6a45c;
+  color: black;
+  padding: 13px 30px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 4px;
+}
+section {
+  padding: 55px 7%;
+}
+h2 {
+  text-align: center;
+  color: #d6b66c;
+  margin-bottom: 35px;
+  font-size: 30px;
+}
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(210px,1fr));
+  gap: 25px;
+}
+.card {
+  background: #1d1d1d;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  padding-bottom: 20px;
+}
+.card img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+}
+.card h3 {
+  margin: 17px 0 10px;
+}
+.price {
+  color: #d6b66c;
+  font-size: 19px;
+  margin-bottom: 15px;
+}
+.card button {
+  background: #c6a45c;
+  padding: 11px 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+.cart {
+  background: #1d1d1d;
+  padding: 25px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: auto;
+}
+.cart p {
+  padding: 10px 0;
+}
+.cart button {
+  margin-top: 15px;
+}
+footer {
+  text-align: center;
+  padding: 30px;
+  background: #080808;
+  color: #aaa;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">MANDO</div>
+  <nav>
+    <a href="#home">الرئيسية</a>
+    <a href="#products">المنتجات</a>
+    <a href="#cart">السلة</a>
+  </nav>
+</header>
+
+<div class="hero" id="home">
+  <h1>MANDO</h1>
+  <p>WEAR YOUR STYLE</p>
+  <p>اكتشف أحدث صيحات الملابس الرجالي</p>
+  <a href="#products" class="btn">تسوق الآن</a>
+</div>
+
+<section id="products">
+  <h2>NEW COLLECTION</h2>
+  <div class="products" id="productList"></div>
+</section>
+
+<section id="cart">
+  <h2>سلة المشتريات</h2>
+  <div class="cart">
+    <div id="cartItems">السلة فارغة</div>
+    <h3 id="total">الإجمالي: 0 جنيه</h3>
+    <button class="btn" onclick="orderNow()">
+      اطلب عبر واتساب
+    </button>
+  </div>
+</section>
+
+<footer>
+  <h3 class="logo">MANDO</h3>
+  <p>Premium Men's Fashion</p>
+  <p>© 2026 MANDO All Rights Reserved</p>
+</footer>
+
+<script>
+// غيّر الرقم لرقم واتساب البراند بكود مصر
+const whatsapp = "201000000000";
+
+const products = [
+  {name:"Classic T-Shirt",price:250,
+  image:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600"},
+
+  {name:"Premium Hoodie",price:550,
+  image:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600"},
+
+  {name:"Men's Jacket",price:750,
+  image:"https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600"},
+
+  {name:"Casual Outfit",price:650,
+  image:"https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600"}
+];
+
+let cart = [];
+
+function showProducts() {
+  document.getElementById("productList").innerHTML =
+    products.map((p,i)=>`
+      <div class="card">
+        <img src="${p.image}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <div class="price">${p.price} جنيه</div>
+        <button onclick="addToCart(${i})">
+          أضف للسلة
+        </button>
+      </div>
+    `).join("");
+}
+
+function addToCart(i) {
+  cart.push(products[i]);
+  showCart();
+}
+
+function showCart() {
+  const items = document.getElementById("cartItems");
+  const total = cart.reduce((sum,p)=>sum+p.price,0);
+
+  items.innerHTML = cart.length
+    ? cart.map((p,i)=>`
+      <p>${p.name} - ${p.price} جنيه
+      <button onclick="removeItem(${i})">حذف</button></p>
+    `).join("")
+    : "السلة فارغة";
+
+  document.getElementById("total").innerText =
+    "الإجمالي: " + total + " جنيه";
+}
+
+function removeItem(i) {
+  cart.splice(i,1);
+  showCart();
+}
+
+function orderNow() {
+  if(cart.length===0) {
+    alert("أضف منتجات للسلة أولاً");
+    return;
+  }
+
+  const total = cart.reduce((sum,p)=>sum+p.price,0);
+  const details = cart.map(p=>
+    p.name + " - " + p.price + " جنيه"
+  ).join("\n");
+
+  const message =
+    "مرحباً MANDO، أريد طلب المنتجات:\n" +
+    details +
+    "\nالإجمالي: " + total + " جنيه";
+
+  window.open(
+    "https://wa.me/" + whatsapp +
+    "?text=" + encodeURIComponent(message),
+    "_blank"
+  );
+}
+
+showProducts();
+showCart();
+</script>
+
+</body>
+</html>
